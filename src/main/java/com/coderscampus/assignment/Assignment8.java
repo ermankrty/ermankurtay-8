@@ -5,13 +5,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.CompletableFuture;
-
 
 public class Assignment8 {
 
@@ -20,53 +20,39 @@ public class Assignment8 {
 
     public Assignment8() {
         try {
-            // Make sure you download the output.txt file for Assignment 8
-            // and place the file in the root of your Java project
             numbers = Files.readAllLines(Paths.get("output.txt"))
-                    .stream()
-                    .map(n -> Integer.parseInt(n))
+                    .parallelStream() 
+                    .map(Integer::parseInt)
                     .collect(Collectors.toList());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    
-    public List<Integer> getNumbers() {
-    	
+    public List<Integer> getNumbersBatch() {
         int start, end;
-        
         synchronized (i) {
-        	
             start = i.get();
             end = i.addAndGet(1000);
-
-            System.out.println("Fetching records from " + start + " to " + (end));
-        }
-      
-        
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
+            System.out.println("Fetching records from " + start + " to " + end);
         }
 
-        List<Integer> newList = new ArrayList<>();
-        
-        IntStream.range(start, end)
-                .forEach(n -> {
-                    newList.add(numbers.get(n));
-                });
-        System.out.println("Done Fetching records " + start + " to " + (end));
+        List<Integer> newList = IntStream.range(start, end)
+                .mapToObj(numbers::get)
+                .collect(Collectors.toList());
+
+        System.out.println("Done Fetching records " + start + " to " + end);
         return newList;
     }
 
-  
     public void processAsyncData() throws InterruptedException, ExecutionException {
+        int totalTasks = 1000;
+        int batchSize = 10; 
+        List<CompletableFuture<List<Integer>>> futures = new ArrayList<>();
 
-    	List<CompletableFuture<List<Integer>>> futures = new ArrayList<>();
-
-        for (int i = 0; i < 1000; i++) {
-            CompletableFuture<List<Integer>> future = CompletableFuture.supplyAsync(this::getNumbers);
+        for (int i = 0; i < totalTasks / batchSize; i++) {
+            CompletableFuture<List<Integer>> future = CompletableFuture.supplyAsync(this::getNumbersBatch,
+                    Executors.newFixedThreadPool(batchSize));
             futures.add(future);
         }
 
