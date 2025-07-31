@@ -1,0 +1,49 @@
+#tasks {
+    display: table;
+    width: 100%;
+}
+
+.tasks {
+    display: table-cell;
+    width: 40%;
+    vertical-align: top;
+}
+
+.tasks ul {
+    margin: 0;
+    list-style: none;
+}
+
+.tasks li {
+    padding: 4px 10px;
+}
+
+.tasks li.active {
+    background-color: #eee;
+}
+
+.tasks.open ul {
+    border-radius: 6px 0 0 6px;
+}
+
+.tasks h1 {
+    font-size: 20px;
+    margin: 0;
+    line-height: 30px;
+}
+
+.task {
+    display: table-cell;
+    height: 100%;
+    background-color: #eee;
+    margin-left: 0;
+    padding: 10px;
+}
+
+.task h1 {
+    margin-top: 0;
+}
+
+.task form {
+    margin-bottom: 0;
+}

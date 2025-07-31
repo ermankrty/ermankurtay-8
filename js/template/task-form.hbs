@@ -1,0 +1,15 @@
+<form>
+  <div>
+    <input type="text" id="title" class="input-xxlarge" placeholder="Title" value="{{model.title}}" />
+  </div>
+  <div>
+    <textarea id="description" class="input-xxlarge" placeholder="Description">{{model.description}}</textarea>
+  </div>
+  <div>
+    <div class="btn-group">
+      <a href="#tasks" title="Cancel" class="btn" title="Cancel"><i class="icon-chevron-left"></i></a>
+      <button type="submit" class="btn btn-primary"><i class="icon-edit icon-white"></i></button>
+      <a href="#task/{{model.id}}/remove" class="btn btn-danger" title="Remove"><i class="icon-trash icon-white"></i></a>
+    </div>
+  </div>
+</form>
